@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.8'
+        python-version: '3.10'
         cache: 'pip'
     
     - name: Install dependencies
@@ -29,12 +29,27 @@ jobs:
     
     - name: Create storage directory
       run: |
-        mkdir -p storage
-        
+        mkdir -p storage/rss/config
+        mkdir -p storage/rss/sitemaps
+    
+    - name: Download previous storage data
+      uses: actions/download-artifact@v3
+      with:
+        name: storage-data
+        path: storage
+      continue-on-error: true  # 第一次运行时没有数据，不要报错
+    
     - name: Run monitor
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_TARGET_CHAT: ${{ secrets.TELEGRAM_TARGET_CHAT }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
-        python site-bot.py 
+        python site-bot.py
+    
+    - name: Upload storage data
+      uses: actions/upload-artifact@v3
+      with:
+        name: storage-data
+        path: storage
+        retention-days: 30  # 保存30天 
