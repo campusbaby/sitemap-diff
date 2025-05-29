@@ -1,3 +1,4 @@
+from typing import Union, Tuple, List
 import json
 import logging
 from pathlib import Path
@@ -21,7 +22,7 @@ class RSSManager:
         if not self.feeds_file.exists():
             self.feeds_file.write_text("[]")
 
-    def download_sitemap(self, url: str) -> tuple[bool, str, Path | None, list[str]]:
+    def download_sitemap(self, url: str) -> Tuple[bool, str, Union[Path, None], List[str]]:
         """下载并保存sitemap文件
 
         Args:
@@ -98,14 +99,14 @@ class RSSManager:
         except Exception as e:
             return False, f"保存失败: {str(e)}", None, []  # 只添加空列表返回
 
-    def add_feed(self, url: str) -> tuple[bool, str, Path | None, list[str]]:
+    def add_feed(self, url: str) -> Tuple[bool, str, Union[Path, None], List[str]]:
         """添加sitemap监控
 
         Args:
             url: sitemap的URL
 
         Returns:
-            tuple[bool, str, Path | None, list[str]]: (是否成功, 错误信息, 带日期的文件路径, 新增的URL列表)
+            Tuple[bool, str, Union[Path, None], List[str]]: (是否成功, 错误信息, 带日期的文件路径, 新增的URL列表)
         """
         try:
             logging.info(f"尝试添加sitemap监控: {url}")
@@ -134,14 +135,14 @@ class RSSManager:
             logging.error(f"添加sitemap监控失败: {url}", exc_info=True)
             return False, f"添加失败: {str(e)}", None, []
 
-    def remove_feed(self, url: str) -> tuple[bool, str]:
+    def remove_feed(self, url: str) -> Tuple[bool, str]:
         """删除RSS订阅
 
         Args:
             url: RSS订阅链接
 
         Returns:
-            tuple[bool, str]: (是否删除成功, 错误信息)
+            Tuple[bool, str]: (是否删除成功, 错误信息)
         """
         try:
             logging.info(f"尝试删除RSS订阅: {url}")
@@ -160,7 +161,7 @@ class RSSManager:
             logging.error(f"删除RSS订阅失败: {url}", exc_info=True)
             return False, f"删除失败: {str(e)}"
 
-    def get_feeds(self) -> list:
+    def get_feeds(self) -> List[str]:
         """获取所有监控的feeds"""
         try:
             content = self.feeds_file.read_text()
@@ -169,7 +170,7 @@ class RSSManager:
             logging.error("读取feeds文件失败", exc_info=True)
             return []
 
-    def compare_sitemaps(self, current_content: str, old_content: str) -> list[str]:
+    def compare_sitemaps(self, current_content: str, old_content: str) -> List[str]:
         """比较新旧sitemap，返回新增的URL列表"""
         try:
             from xml.etree import ElementTree as ET
