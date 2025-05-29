@@ -110,7 +110,7 @@ async def rss_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         await update.message.reply_text(
             "请使用以下命令：\n"
             "/rss list - 显示所有监控的sitemap\n"
-            "/rss add URL - 添加sitemap监控（URL必须以sitemap.xml结尾）\n"
+            "/rss add URL - 添加sitemap监控（URL需包含sitemap或sitemaps关键词）\n"
             "/rss del URL - 删除sitemap监控"
         )
         return
@@ -132,15 +132,15 @@ async def rss_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         if len(context.args) < 2:
             logging.warning("add命令缺少URL参数")
             await update.message.reply_text(
-                "请提供sitemap.xml的URL\n例如：/rss add https://example.com/sitemap.xml"
+                "请提供sitemap的URL\n例如：/rss add https://example.com/sitemap.xml"
             )
             return
 
         url = context.args[1]
-        # 检查URL是否包含sitemap关键词，不再强制要求.xml后缀
-        if "sitemap" not in url.lower():
-            logging.warning(f"无效的sitemap URL: {url} (URL需包含sitemap关键词)")
-            await update.message.reply_text("URL必须以sitemap.xml结尾")
+        # 检查URL是否包含sitemap或sitemaps关键词
+        if "sitemap" not in url.lower() and "sitemaps" not in url.lower():
+            logging.warning(f"无效的sitemap URL: {url} (URL需包含sitemap或sitemaps关键词)")
+            await update.message.reply_text("URL必须包含'sitemap'或'sitemaps'关键词\n例如：\n- https://example.com/sitemap.xml\n- https://example.com/sitemaps\n- https://example.com/sitemap/index")
             return
 
         logging.info(f"执行add命令，URL: {url}")
