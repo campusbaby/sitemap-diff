@@ -14,10 +14,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
         python-version: '3.10'
         cache: 'pip'
@@ -33,7 +33,7 @@ jobs:
         mkdir -p storage/rss/sitemaps
     
     - name: Download previous storage data
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         name: storage-data
         path: storage
@@ -48,7 +48,7 @@ jobs:
         python site-bot.py
     
     - name: Upload storage data
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: storage-data
         path: storage
